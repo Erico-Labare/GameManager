@@ -1,0 +1,51 @@
+
+services:
+  cassandra1:
+    image: cassandra:5.0.9
+    container_name: cassandra1
+    hostname: cassandra1
+    environment:
+      CASSANDRA_CLUSTER_NAME: GameManagerCluster
+      CASSANDRA_SEEDS: cassandra1
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: 16
+      MAX_HEAP_SIZE: 512M
+      MAX_DIRECT_MEMORY_SIZE: 256M
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra1_data:/var/lib/cassandra
+    networks:
+      - gamemanager-net
+
+
+  cassandra2:
+    image: cassandra:5.0.9
+    container_name: cassandra2
+    hostname: cassandra2
+    environment:
+      CASSANDRA_CLUSTER_NAME: GameManagerCluster
+      CASSANDRA_SEEDS: cassandra1
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: 16
+      MAX_HEAP_SIZE: 512M
+      MAX_DIRECT_MEMORY_SIZE: 256M
+    depends_on:
+      - cassandra1
+    volumes:
+      - cassandra2_data:/var/lib/cassandra
+    networks:
+      - gamemanager-net
+
+networks:
+  gamemanager-net:
+    driver: bridge
+
+volumes:
+  cassandra1_data:
+  cassandra2_data:
+
